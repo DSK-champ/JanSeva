@@ -320,6 +320,7 @@ const getDeploymentPlan = asyncHandler(async (req, res) => {
     primaryDomain: a.domain,
     vulnerabilityClass: a.domain_score > 75 ? 'CRITICAL' : a.domain_score > 65 ? 'HIGH' : 'MEDIUM',
     overallVulnerabilityScore: a.domain_score,
+    fundsAssigned: a.funds_assigned || 0,
     assignedVolunteers: a.volunteers_assigned.map(vid => {
       const vidStr = vid.toString();
       const score = scoreMap[vidStr];
@@ -413,6 +414,8 @@ const runMatching = asyncHandler(async (req, res) => {
 
   const campaign = await db.collection('campaigns').findOne({ _id: campaignId });
   if (!campaign) return res.status(404).json({ success: false, message: 'Campaign not found' });
+  
+  console.log(`[Matching] Campaign: ${campaign.title}, TargetAmount: ${campaign.targetAmount}`);
 
   const registered = await db.collection('campaignregistrations').find({ campaignId }).toArray();
   if (!registered.length) return res.status(400).json({ success: false, message: 'No registered volunteers found' });
@@ -522,11 +525,13 @@ const runMatching = asyncHandler(async (req, res) => {
     shelter:   kw => kw.toLowerCase().includes('shelter') || kw.toLowerCase().includes('construct') || kw.toLowerCase().includes('care'),
   };
 
-  const isMultiDomain = campaign.category === 'Other';
+  const isMultiDomain = campaign.category === 'Other' || campaign.category === 'Multi-Domain Aid';
 
+  // Calculate total vulnerability across ALL villages being assigned
+  let totalCampaignVuln = 0;
+  const groups = { food: [], medical: [], education: [], shelter: [] };
+  
   if (isMultiDomain) {
-    // Group villages by their most-vulnerable domain
-    const groups = { food: [], medical: [], education: [], shelter: [] };
     for (const v of vScores) {
       const domScores = {
         food: v.foodScore || 0, medical: v.healthScore || 0,
@@ -534,8 +539,15 @@ const runMatching = asyncHandler(async (req, res) => {
       };
       const primary = Object.entries(domScores).sort((a, b) => b[1] - a[1])[0][0];
       groups[primary].push(v);
+      totalCampaignVuln += (v.overallVulnerabilityScore || 0);
     }
+  } else {
+    totalCampaignVuln = vScores.reduce((s, v) => s + (v.overallVulnerabilityScore || 0), 0);
+  }
 
+  const campaignBudget = campaign.targetAmount || 0;
+
+  if (isMultiDomain) {
     // For each domain group, find volunteers with matching expertise
     for (const [domain, villages] of Object.entries(groups)) {
       if (!villages.length) continue;
@@ -549,7 +561,10 @@ const runMatching = asyncHandler(async (req, res) => {
         ? domainVols.filter(s => !allAssigned.has(s.volunteerId.toString()))
         : allScores.filter(s => !allAssigned.has(s.volunteerId.toString()));
 
-      const domainBudget = Math.floor((campaign.targetAmount || 0) / 4);
+      // Instead of fixed /4, we use the proportion of this domain's vuln to total
+      const domainVuln = villages.reduce((s, v) => s + (v.overallVulnerabilityScore || 0), 0);
+      const domainBudget = totalCampaignVuln > 0 ? (domainVuln / totalCampaignVuln) * campaignBudget : campaignBudget / 4;
+      
       await assignToVillages(villages, pool, domain, domainBudget);
     }
   } else {

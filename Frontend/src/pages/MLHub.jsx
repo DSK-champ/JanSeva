@@ -171,7 +171,6 @@ export default function MLHub() {
             <div className="bg-white rounded-2xl p-5 border shadow-sm">
               <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">Volunteers</p>
               <p className="text-3xl font-black text-blue-500">{stats.totalVolunteers}</p>
-              <p className="text-xs text-gray-400 mt-1 font-medium">{Math.floor(stats.totalVolunteers * 0.7)} available now</p>
             </div>
             <div className="bg-white rounded-2xl p-5 border shadow-sm">
               <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">Avg Vol Score</p>
@@ -458,6 +457,11 @@ export default function MLHub() {
                           <div className="text-left">
                             <p className="text-[10px] text-gray-400 font-bold uppercase">Priority</p>
                             <span className={`text-xs font-black px-2 py-0.5 rounded mt-1 inline-block border ${CLASS_COLORS[v.vulnerabilityClass] || ''}`}>{v.vulnerabilityClass}</span>
+                          </div>
+                          <div className="h-8 w-px bg-gray-200"></div>
+                          <div className="text-left">
+                            <p className="text-[10px] text-gray-400 font-bold uppercase">Funds Assigned</p>
+                            <p className="text-lg font-black text-indigo-600 leading-none mt-1">₹{(v.fundsAssigned || 0).toLocaleString()}</p>
                           </div>
                         </div>
                       </div>

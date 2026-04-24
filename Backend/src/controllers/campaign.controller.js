@@ -1,4 +1,8 @@
 const Campaign = require('../models/Campaign');
+const Village = require('../models/Village');
+const VillageScore = require('../models/VillageScore');
+const Volunteer = require('../models/Volunteer');
+const Assignment = require('../models/Assignment');
 const asyncHandler = require('../utils/asyncHandler');
 const { sendSuccess } = require('../utils/apiResponse');
 const AppError = require('../utils/AppError');
@@ -147,9 +151,6 @@ const getCampaignStats = asyncHandler(async (req, res) => {
 });
 
 const { parse } = require('csv-parse/sync');
-const Village = require('../models/Village');
-const Assignment = require('../models/Assignment');
-const Volunteer = require('../models/Volunteer');
 
 // ─── POST /api/campaigns/with-survey — Create Campaign & Run Aid Algorithm ─────
 const createCampaignWithSurvey = asyncHandler(async (req, res) => {
@@ -195,92 +196,184 @@ const createCampaignWithSurvey = asyncHandler(async (req, res) => {
         trim: true,
         bom: true,
         cast: true,
-        relax_column_count: true
+        relax_column_count: true,
+        comment: '#'
       });
- 
-      const villageDocs = [];
- 
-      // 3. Score Villages
+
+      // 3. Group Households into Villages and Aggregate Metrics
+      const villageGroups = {};
+      const villageScoreDocs = [];
+
       for (const row of records) {
-        // Score calculation logic translated from MongoDB Aggregation to JS
-        const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
- 
-        const m_score = 
-          (100 - (row.vaccination_coverage_pct || 0)) * 0.20 +
-          (row.infant_mortality_rate_per_1000 || 0) * 0.30 +
-          (row.malnutrition_children_pct || 0) * 0.25 +
-          (row.avg_distance_to_hospital_km || 0) * 0.15 +
-          (5 - clamp(row.doctors_per_1000 || 0, 0, 5)) * 20 * 0.10;
- 
-        const f_score = 
-          (row.food_insecure_households_pct || 0) * 0.35 +
-          (3 - (row.avg_meals_per_day || 0)) * 33.3 * 0.30 +
-          (100 - (row.clean_water_access_pct || 0)) * 0.15 +
-          (row.crop_failure_last_3_years || 0) * 33.3 * 0.10 +
-          (100 - (row.ration_card_coverage_pct || 0)) * 0.10;
- 
-        const e_score = 
-          (100 - (row.literacy_rate_pct || 0)) * 0.25 +
-          (100 - (row.school_enrollment_pct || 0)) * 0.30 +
-          clamp((row.student_teacher_ratio || 0) - 30, 0, 50) * 2 * 0.20 +
-          (row.dropout_rate_pct || 0) * 0.15 +
-          clamp(row.distance_to_school_km || 0, 0, 20) * 5 * 0.10;
- 
-        const s_score = 
-          (row.homeless_or_damaged_homes_pct || 0) * 0.30 +
-          clamp((row.avg_persons_per_room || 0) - 1, 0, 9) * 11.1 * 0.15 +
-          (row.homes_without_electricity_pct || 0) * 0.15 +
-          (row.homes_without_sanitation_pct || 0) * 0.20 +
-          (row.disaster_affected_pct || 0) * 0.20;
- 
+        const vid = row.village_id || `VIL_${row.village_name || 'Unknown'}`;
+        if (!villageGroups[vid]) {
+          villageGroups[vid] = {
+            village_id: vid,
+            village_name: row.village_name || 'Unnamed Village',
+            state: row.state || ngo.state,
+            district: row.district || row.city || ngo.city,
+            population: parseInt(row.population) || 0,
+            households: 0,
+            metrics: {
+              // Health
+              vaccination_coverage: [],
+              infant_mortality: [],
+              malnutrition: [],
+              hospital_dist: [],
+              doctors: [],
+              // Food
+              food_insecurity: [],
+              meals_per_day: [],
+              water_access: [],
+              crop_failure: [],
+              ration_card: [],
+              // Education
+              literacy: [],
+              enrollment: [],
+              teacher_ratio: [],
+              dropout: [],
+              school_dist: [],
+              // Shelter
+              homeless_damaged: [],
+              persons_per_room: [],
+              electricity_gap: [],
+              sanitation_gap: [],
+              disaster: []
+            }
+          };
+        }
+
+        const g = villageGroups[vid];
+        g.households += 1;
+        const pop = parseInt(row.population);
+        if (!isNaN(pop)) g.population += pop;
+
+        // Helper to push value if it's a valid number
+        const pushVal = (val) => {
+          const num = parseFloat(val);
+          return (!isNaN(num)) ? num : null;
+        };
+
+        const addMetric = (arr, val) => {
+          if (val !== null && val !== undefined) {
+            const num = parseFloat(val);
+            if (!isNaN(num)) arr.push(num);
+          }
+        };
+
+        // Health mappings
+        addMetric(g.metrics.vaccination_coverage, row.vaccination_coverage_pct ?? row.vaccinated_children_pct);
+        addMetric(g.metrics.infant_mortality, row.infant_mortality_rate_per_1000 ?? (row.infant_deaths_last_5yr ? row.infant_deaths_last_5yr * 20 : null)); 
+        addMetric(g.metrics.malnutrition, row.malnutrition_children_pct ?? row.malnourished_children_under5 ?? (row.child_malnutrition_yn !== undefined ? row.child_malnutrition_yn * 100 : null));
+        addMetric(g.metrics.hospital_dist, row.avg_distance_to_hospital_km ?? row.distance_to_hospital_km);
+        addMetric(g.metrics.doctors, row.doctors_per_1000);
+
+        // Food mappings
+        addMetric(g.metrics.food_insecurity, row.food_insecure_households_pct ?? (row.food_insecure_months_per_year ? row.food_insecure_months_per_year * 8.33 : null));
+        addMetric(g.metrics.meals_per_day, row.avg_meals_per_day ?? row.meals_per_day);
+        addMetric(g.metrics.water_access, row.clean_water_access_pct ?? (row.clean_water_access_yn !== undefined ? row.clean_water_access_yn * 100 : null));
+        addMetric(g.metrics.crop_failure, row.crop_failure_last_3_years ?? (row.crop_failure_last_3yr ? row.crop_failure_last_3yr * 33.3 : null));
+        addMetric(g.metrics.ration_card, row.ration_card_coverage_pct ?? (row.ration_card_yn !== undefined ? row.ration_card_yn * 100 : null));
+
+        // Education mappings
+        addMetric(g.metrics.literacy, row.literacy_rate_pct ?? (row.total_females_count > 0 ? (row.literate_females_count / row.total_females_count * 100) : null));
+        addMetric(g.metrics.enrollment, row.school_enrollment_pct ?? (row.school_age_children_count > 0 ? (row.enrolled_children_count / row.school_age_children_count * 100) : null));
+        addMetric(g.metrics.teacher_ratio, row.student_teacher_ratio ?? (row.teachers_in_school > 0 ? (row.enrolled_children_count / row.teachers_in_school) : null));
+        addMetric(g.metrics.dropout, row.dropout_rate_pct ?? (row.enrolled_children_count > 0 ? (row.dropout_children_count / row.enrolled_children_count * 100) : null));
+        addMetric(g.metrics.school_dist, row.distance_to_school_km);
+
+        // Shelter mappings
+        addMetric(g.metrics.homeless_damaged, row.homeless_or_damaged_homes_pct ?? (row.house_damaged_yn !== undefined ? row.house_damaged_yn * 100 : null));
+        addMetric(g.metrics.persons_per_room, row.avg_persons_per_room ?? row.persons_per_room);
+        addMetric(g.metrics.electricity_gap, row.homes_without_electricity_pct ?? (row.electricity_access_yn !== undefined ? (1 - row.electricity_access_yn) * 100 : null));
+        addMetric(g.metrics.sanitation_gap, row.homes_without_sanitation_pct ?? (row.toilet_access_yn !== undefined ? (1 - row.toilet_access_yn) * 100 : null));
+        addMetric(g.metrics.disaster, row.disaster_affected_pct ?? (row.disaster_affected_yn !== undefined ? row.disaster_affected_yn * 100 : null));
+      }
+
+      const villageDocs = [];
+      const avg = (arr, def = 0) => arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : def;
+      const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+      for (const vid in villageGroups) {
+        const g = villageGroups[vid];
+        const m = g.metrics;
+
+        // Calculate Average Metrics for the village
+        const vax = avg(m.vaccination_coverage, 75);
+        const imr = avg(m.infant_mortality, 10);
+        const mal = avg(m.malnutrition, 15);
+        const hdist = avg(m.hospital_dist, 5);
+        const docs = avg(m.doctors, 0.5);
+
+        const food_ins = avg(m.food_insecurity, 20);
+        const meals = avg(m.meals_per_day, 2.5);
+        const water = avg(m.water_access, 70);
+        const crop = avg(m.crop_failure, 1);
+        const ration = avg(m.ration_card, 80);
+
+        const lit = avg(m.literacy, 65);
+        const enroll = avg(m.enrollment, 80);
+        const tratio = avg(m.teacher_ratio, 35);
+        const drop = avg(m.dropout, 10);
+        const sdist = avg(m.school_dist, 3);
+
+        const shelter_dmg = avg(m.homeless_damaged, 5);
+        const ppr = avg(m.persons_per_room, 3);
+        const elec_gap = avg(m.electricity_gap, 20);
+        const san_gap = avg(m.sanitation_gap, 30);
+        const dis = avg(m.disaster, 10);
+
+        // Scoring Logic
+        const m_score = (100 - vax) * 0.20 + imr * 0.30 + mal * 0.25 + hdist * 0.15 + (5 - clamp(docs, 0, 5)) * 20 * 0.10;
+        const f_score = food_ins * 0.35 + (3 - clamp(meals, 0, 3)) * 33.3 * 0.30 + (100 - water) * 0.15 + clamp(crop, 0, 3) * 33.3 * 0.10 + (100 - ration) * 0.10;
+        const e_score = (100 - lit) * 0.25 + (100 - enroll) * 0.30 + clamp(tratio - 30, 0, 50) * 2 * 0.20 + drop * 0.15 + clamp(sdist, 0, 20) * 5 * 0.10;
+        const s_score = shelter_dmg * 0.30 + clamp(ppr - 1, 0, 9) * 11.1 * 0.15 + elec_gap * 0.15 + san_gap * 0.20 + dis * 0.20;
+
         const overall_score = (m_score + f_score + e_score + s_score) / 4;
- 
+        const vulnClass = overall_score > 75 ? 'CRITICAL' : overall_score > 60 ? 'HIGH' : overall_score > 40 ? 'MEDIUM' : 'LOW';
+        const pDomain = m_score >= Math.max(f_score, e_score, s_score) ? 'Medical' 
+                     : f_score >= Math.max(m_score, e_score, s_score) ? 'Food'
+                     : e_score >= Math.max(m_score, f_score, s_score) ? 'Education'
+                     : 'Shelter';
+
         villageDocs.push({
           campaignId: campaign._id,
-          village_id: row.village_id || `VIL_${Math.random().toString(36).substr(2, 5)}`,
-          village_name: row.village_name || 'Unnamed Village',
-          state: row.state || ngo.state,
-          district: row.district || ngo.city,
-          population: parseInt(row.population) || 1000,
-          survey_date: row.survey_date ? new Date(row.survey_date) : new Date(),
-          medical: {
-            num_health_centers: row.num_health_centers,
-            avg_distance_to_hospital_km: row.avg_distance_to_hospital_km,
-            doctors_per_1000: row.doctors_per_1000,
-            vaccination_coverage_pct: row.vaccination_coverage_pct,
-            infant_mortality_rate_per_1000: row.infant_mortality_rate_per_1000,
-            malnutrition_children_pct: row.malnutrition_children_pct,
-            score: m_score
-          },
-          food: {
-            food_insecure_households_pct: row.food_insecure_households_pct,
-            avg_meals_per_day: row.avg_meals_per_day,
-            clean_water_access_pct: row.clean_water_access_pct,
-            crop_failure_last_3_years: row.crop_failure_last_3_years,
-            ration_card_coverage_pct: row.ration_card_coverage_pct,
-            score: f_score
-          },
-          education: {
-            literacy_rate_pct: row.literacy_rate_pct,
-            school_enrollment_pct: row.school_enrollment_pct,
-            student_teacher_ratio: row.student_teacher_ratio,
-            dropout_rate_pct: row.dropout_rate_pct,
-            distance_to_school_km: row.distance_to_school_km,
-            score: e_score
-          },
-          shelter: {
-            homeless_or_damaged_homes_pct: row.homeless_or_damaged_homes_pct,
-            avg_persons_per_room: row.avg_persons_per_room,
-            homes_without_electricity_pct: row.homes_without_electricity_pct,
-            homes_without_sanitation_pct: row.homes_without_sanitation_pct,
-            disaster_affected_pct: row.disaster_affected_pct,
-            score: s_score
-          },
+          village_id: g.village_id,
+          village_name: g.village_name,
+          state: g.state,
+          district: g.district,
+          population: Math.max(g.population, g.households * 4),
+          survey_date: new Date(),
+          medical: { vaccination_coverage_pct: vax, infant_mortality_rate_per_1000: imr, malnutrition_children_pct: mal, avg_distance_to_hospital_km: hdist, doctors_per_1000: docs, score: m_score },
+          food: { food_insecure_households_pct: food_ins, avg_meals_per_day: meals, clean_water_access_pct: water, crop_failure_last_3_years: crop, ration_card_coverage_pct: ration, score: f_score },
+          education: { literacy_rate_pct: lit, school_enrollment_pct: enroll, student_teacher_ratio: tratio, dropout_rate_pct: drop, distance_to_school_km: sdist, score: e_score },
+          shelter: { homeless_or_damaged_homes_pct: shelter_dmg, avg_persons_per_room: ppr, homes_without_electricity_pct: elec_gap, homes_without_sanitation_pct: san_gap, disaster_affected_pct: dis, score: s_score },
           overall_priority_score: overall_score
         });
+
+        villageScoreDocs.push({
+          campaignId: campaign._id,
+          villageId: g.village_id,
+          villageName: g.village_name,
+          state: g.state,
+          district: g.district,
+          population: Math.max(g.population, g.households * 4),
+          healthScore: m_score,
+          foodScore: f_score,
+          educationScore: e_score,
+          shelterScore: s_score,
+          overallVulnerabilityScore: overall_score,
+          vulnerabilityClass: vulnClass,
+          primaryDomain: pDomain,
+          domainsAvailable: ['Medical', 'Food', 'Education', 'Shelter'].filter((_, i) => [m_score, f_score, e_score, s_score][i] > 15),
+          computedAt: new Date()
+        });
       }
- 
-      const insertedVillages = await Village.insertMany(villageDocs);
+
+      const [insertedVillages, insertedScores] = await Promise.all([
+        Village.insertMany(villageDocs),
+        VillageScore.insertMany(villageScoreDocs)
+      ]);
       villagesCount = insertedVillages.length;
  
       // 4. Volunteer Ranking
@@ -324,8 +417,8 @@ const createCampaignWithSurvey = asyncHandler(async (req, res) => {
           globalTotalScore += (v[domainStr]?.score || 0);
         });
       }
- 
-      const targetAmount = parseFloat(req.body.targetAmount) || 0;
+
+      const targetAmountVal = parseFloat(req.body.targetAmount) || 0;
  
       for (const domainStr of activeDomains) {
         const targets = domainTargetsObj[domainStr];
@@ -374,7 +467,7 @@ const createCampaignWithSurvey = asyncHandler(async (req, res) => {
             
             let fundsAssigned = 0;
             if (globalTotalScore > 0) {
-              fundsAssigned = Math.round((score / globalTotalScore) * targetAmount);
+              fundsAssigned = Math.round((score / globalTotalScore) * targetAmountVal);
             }
  
             const needed = villageNeeds[idx];
