@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { parse } = require('csv-parse/sync');
 const { stringify } = require('csv-stringify/sync');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 const SurveyUpload = require('../../Backend/src/models/SurveyUpload');
 const SurveyResponse = require('../../Backend/src/models/SurveyResponse');
 const { buildVulnerabilityPipeline, buildOverallVulnerabilityPipeline } = require('../pipelines/villageVulnerability');
@@ -101,7 +101,7 @@ const uploadSurveys = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: 'No files uploaded.' });
   }
 
-  const sessionId = uuidv4();
+  const sessionId = randomUUID();
   const results = [];
   const surveysUploaded = [];
 
