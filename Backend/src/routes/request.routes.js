@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const {
   createRequest,
+  getMyRequests,
   getRequests,
   getRequestById,
   updateRequest,
@@ -8,6 +9,9 @@ const {
 } = require('../controllers/request.controller');
 const { protect, optionalAuth } = require('../middlewares/auth.middleware');
 const { requestValidator, objectIdValidator } = require('../middlewares/validation.middleware');
+
+// Protected: must be before /:id so "my" isn't treated as an ObjectId
+router.get('/my', protect, getMyRequests);
 
 // Public routes (optional auth for personalized responses)
 router.get('/', optionalAuth, getRequests);

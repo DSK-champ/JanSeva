@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
-import { Building2, Users, CheckCircle, XCircle, AlertTriangle, Plus, FileSpreadsheet, Map, Download, ChevronDown, Brain, Search } from 'lucide-react'
+import { Building2, Users, CheckCircle, XCircle, AlertTriangle, Plus, FileSpreadsheet, Map, Download, ChevronDown, Brain, Search, ClipboardList } from 'lucide-react'
 
 const API = 'http://localhost:5000/api'
 
@@ -11,6 +11,7 @@ export default function NGODashboard({ user }) {
   const [approvedVolunteers, setApprovedVolunteers] = useState([])
   const [assignHoursInput, setAssignHoursInput] = useState({})
   const [campaigns, setCampaigns] = useState([])
+  const [myRequests, setMyRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchVolunteer, setSearchVolunteer] = useState('')
 
@@ -32,17 +33,19 @@ export default function NGODashboard({ user }) {
 
   const loadData = async () => {
     try {
-      const [ngoRes, pendingRes, approvedRes, campRes] = await Promise.all([
+      const [ngoRes, pendingRes, approvedRes, campRes, requestsRes] = await Promise.all([
         fetch(`${API}/ngos/profile`, { headers }).then(res => res.json()),
         fetch(`${API}/volunteer-ngo/pending`, { headers }).then(res => res.json()),
         fetch(`${API}/volunteer-ngo/approved`, { headers }).then(res => res.json()),
-        fetch(`${API}/campaigns/ngo/my`, { headers }).then(res => res.json())
+        fetch(`${API}/campaigns/ngo/my`, { headers }).then(res => res.json()),
+        fetch(`${API}/requests/my?limit=20&sort=createdAt&order=desc`, { headers }).then(res => res.json()),
       ])
       
       if (ngoRes.success) setProfile(ngoRes.data)
       if (pendingRes.success) setPendingRequests(pendingRes.data)
       if (approvedRes.success) setApprovedVolunteers(approvedRes.data)
       if (campRes.success) setCampaigns(campRes.data)
+      if (requestsRes.success) setMyRequests(requestsRes.data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -488,6 +491,82 @@ export default function NGODashboard({ user }) {
           </div>
         </div>
       )}
+      {/* ── My Submitted Service Requests ── */}
+      <section className="section pt-0">
+        <div className="container">
+          <div className="glass-card overflow-hidden">
+            <div className="border-b p-5 flex items-center justify-between" style={{ borderColor: 'rgba(45,106,79,0.08)' }}>
+              <div className="flex items-center gap-3">
+                <div className="icon-shell h-9 w-9"><ClipboardList size={17} strokeWidth={1.8} /></div>
+                <div>
+                  <h2 className="text-xl font-extrabold tracking-[-0.04em]" style={{ color: 'var(--green-8)', fontFamily: 'Space Grotesk, Manrope, sans-serif' }}>Service Requests Submitted</h2>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Track the status of requests your NGO has submitted — updated by admin in real time</p>
+                </div>
+              </div>
+              <Link to="/submit-request" className="btn-primary text-sm py-2">+ Submit Request</Link>
+            </div>
+
+            {myRequests.length === 0 ? (
+              <div className="p-12 text-center">
+                <ClipboardList size={36} className="mx-auto mb-4 opacity-25" />
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No service requests submitted yet.</p>
+                <Link to="/submit-request" className="btn-primary mt-4 inline-flex">Submit a Request</Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Location</th>
+                      <th>Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myRequests.map(req => {
+                      const statusColors = {
+                        Pending:       { color: '#F4A261', bg: 'rgba(244,162,97,0.12)'   },
+                        'In Progress': { color: '#4CC9F0', bg: 'rgba(76,201,240,0.12)'  },
+                        Resolved:      { color: '#40916C', bg: 'rgba(64,145,108,0.12)'  },
+                        Cancelled:     { color: '#9CA3AF', bg: 'rgba(156,163,175,0.12)' },
+                      }
+                      const s  = statusColors[req.status] || statusColors.Pending
+                      const pc = { High: '#DC2626', Medium: '#F4A261', Low: '#40916C' }[req.priority] || '#5F7F72'
+                      return (
+                        <tr key={req._id}>
+                          <td className="font-semibold" style={{ color: 'var(--green-8)', maxWidth: 240 }}>
+                            <span className="line-clamp-1">{req.title}</span>
+                          </td>
+                          <td>
+                            <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: 'rgba(45,106,79,0.08)', color: 'var(--green-8)' }}>
+                              {req.category}
+                            </span>
+                          </td>
+                          <td><span className="text-xs font-bold" style={{ color: pc }}>{req.priority}</span></td>
+                          <td>
+                            <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: s.bg, color: s.color }}>
+                              {req.status}
+                            </span>
+                          </td>
+                          <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            {req.location?.city}{req.location?.state ? `, ${req.location.state}` : ''}
+                          </td>
+                          <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            {req.createdAt ? new Date(req.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

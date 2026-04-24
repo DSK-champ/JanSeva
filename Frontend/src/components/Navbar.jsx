@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, HeartHandshake, ChevronDown, BarChart3, Map, Trophy, Megaphone, Heart, Sparkles, LogOut, User } from 'lucide-react'
+import { Menu, X, HeartHandshake, ChevronDown, BarChart3, Map, Trophy, Megaphone, Heart, ClipboardList, LogOut, User } from 'lucide-react'
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
@@ -14,6 +14,7 @@ const NAV_LINKS = [
       { to: '/campaigns', label: 'Campaigns', icon: Megaphone },
       { to: '/contributions', label: 'Contributions', icon: Heart },
       { to: '/statistics', label: 'Analytics', icon: BarChart3 },
+      { to: '/submit-request', label: 'Submit Request', icon: ClipboardList },
     ],
   },
   { to: '/contact', label: 'Contact' },
@@ -152,6 +153,14 @@ export default function Navbar() {
           <div className="ml-auto hidden items-center gap-3 lg:flex">
             {user ? (
               <>
+                <Link
+                  to="/submit-request"
+                  className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold"
+                  style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626' }}
+                >
+                  <ClipboardList size={16} />
+                  Submit Request
+                </Link>
                 <Link
                   to="/dashboard"
                   className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold"

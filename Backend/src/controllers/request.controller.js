@@ -45,6 +45,35 @@ const createRequest = asyncHandler(async (req, res) => {
   sendSuccess(res, 201, 'Service request created successfully', request);
 });
 
+// ─── @route  GET /api/requests/my — Own requests only ────────────────────────
+// ─── @access Private
+const getMyRequests = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 20, sort = 'createdAt', order = 'desc' } = req.query;
+
+  const pageNum  = Math.max(1, parseInt(page));
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+  const skip     = (pageNum - 1) * limitNum;
+  const sortOrder = order === 'asc' ? 1 : -1;
+
+  const filter = { createdBy: req.user._id };
+
+  const [requests, total] = await Promise.all([
+    ServiceRequest.find(filter)
+      .sort({ [sort]: sortOrder })
+      .skip(skip)
+      .limit(limitNum),
+    ServiceRequest.countDocuments(filter),
+  ]);
+
+  sendSuccess(res, 200, 'Your requests fetched', requests, {
+    total,
+    page: pageNum,
+    limit: limitNum,
+    totalPages: Math.ceil(total / limitNum),
+  });
+});
+
+
 // ─── @route  GET /api/requests ────────────────────────────────────────────────
 // ─── @access Public (with optional auth)
 const getRequests = asyncHandler(async (req, res) => {
@@ -146,4 +175,4 @@ const deleteRequest = asyncHandler(async (req, res, next) => {
   sendSuccess(res, 200, 'Service request deleted successfully');
 });
 
-module.exports = { createRequest, getRequests, getRequestById, updateRequest, deleteRequest };
+module.exports = { createRequest, getMyRequests, getRequests, getRequestById, updateRequest, deleteRequest };

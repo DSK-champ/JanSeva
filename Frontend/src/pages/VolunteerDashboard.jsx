@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, CheckCircle, AlertTriangle, Building2, MapPin } from 'lucide-react'
+import { Calendar, Clock, CheckCircle, AlertTriangle, Building2, MapPin, ClipboardList } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const API = 'http://localhost:5000/api'
@@ -10,6 +10,7 @@ export default function VolunteerDashboard({ user }) {
   const [myEvents, setMyEvents] = useState([])
   const [myNGOs, setMyNGOs] = useState([])
   const [allNGOs, setAllNGOs] = useState([])
+  const [myRequests, setMyRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAddNGO, setShowAddNGO] = useState(false)
   const [searchNGO, setSearchNGO] = useState('')
@@ -19,12 +20,13 @@ export default function VolunteerDashboard({ user }) {
 
   const loadData = async () => {
     try {
-      const [profileRes, eventsRes, myEventsRes, ngosRes, allNgosRes] = await Promise.all([
+      const [profileRes, eventsRes, myEventsRes, ngosRes, allNgosRes, requestsRes] = await Promise.all([
         fetch(`${API}/volunteer/profile`, { headers }).then(res => res.json()),
         fetch(`${API}/campaigns`, { headers }).then(res => res.json()),
         fetch(`${API}/campaigns/my`, { headers }).then(res => res.json()),
         fetch(`${API}/volunteer-ngo/my-ngos`, { headers }).then(res => res.json()),
-        fetch(`${API}/ngos`, { headers }).then(res => res.json())
+        fetch(`${API}/ngos`, { headers }).then(res => res.json()),
+        fetch(`${API}/requests/my?limit=20&sort=createdAt&order=desc`, { headers }).then(res => res.json()),
       ])
 
       if (profileRes.success) setProfile(profileRes.data)
@@ -32,6 +34,7 @@ export default function VolunteerDashboard({ user }) {
       if (myEventsRes.success) setMyEvents(myEventsRes.data.map(e => e._id))
       if (ngosRes.success) setMyNGOs(ngosRes.data)
       if (allNgosRes.success) setAllNGOs(allNgosRes.data)
+      if (requestsRes.success) setMyRequests(requestsRes.data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -257,6 +260,87 @@ export default function VolunteerDashboard({ user }) {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── My Service Requests ── */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="glass-card overflow-hidden">
+            <div className="border-b p-5 flex items-center justify-between" style={{ borderColor: 'rgba(45,106,79,0.08)' }}>
+              <div className="flex items-center gap-3">
+                <div className="icon-shell h-9 w-9"><ClipboardList size={17} strokeWidth={1.8} /></div>
+                <div>
+                  <h2 className="text-xl font-extrabold tracking-[-0.04em]" style={{ color: 'var(--green-8)', fontFamily: 'Space Grotesk, Manrope, sans-serif' }}>My Service Requests</h2>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Track the status of every request you have submitted</p>
+                </div>
+              </div>
+              <Link to="/submit-request" className="btn-primary text-sm py-2">
+                + New Request
+              </Link>
+            </div>
+
+            {myRequests.length === 0 ? (
+              <div className="p-12 text-center">
+                <ClipboardList size={36} className="mx-auto mb-4 opacity-25" />
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>You haven't submitted any service requests yet.</p>
+                <Link to="/submit-request" className="btn-primary mt-4 inline-flex">Submit a Request</Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Location</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myRequests.map(req => {
+                      const statusColors = {
+                        Pending:      { color: '#F4A261', bg: 'rgba(244,162,97,0.12)'   },
+                        'In Progress':{ color: '#4CC9F0', bg: 'rgba(76,201,240,0.12)'  },
+                        Resolved:     { color: '#40916C', bg: 'rgba(64,145,108,0.12)'  },
+                        Cancelled:    { color: '#9CA3AF', bg: 'rgba(156,163,175,0.12)' },
+                      }
+                      const s = statusColors[req.status] || statusColors.Pending
+                      const priorityColor = { High: '#DC2626', Medium: '#F4A261', Low: '#40916C' }[req.priority] || '#5F7F72'
+                      return (
+                        <tr key={req._id}>
+                          <td className="font-semibold" style={{ color: 'var(--green-8)', maxWidth: 220 }}>
+                            <span className="line-clamp-1">{req.title}</span>
+                          </td>
+                          <td>
+                            <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: 'rgba(45,106,79,0.08)', color: 'var(--green-8)' }}>
+                              {req.category}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="text-xs font-bold" style={{ color: priorityColor }}>{req.priority}</span>
+                          </td>
+                          <td>
+                            <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: s.bg, color: s.color }}>
+                              {req.status}
+                            </span>
+                          </td>
+                          <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            {req.location?.city}{req.location?.state ? `, ${req.location.state}` : ''}
+                          </td>
+                          <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            {req.createdAt ? new Date(req.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </section>

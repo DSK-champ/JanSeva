@@ -50,7 +50,7 @@ export default function Contributions() {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      await fetch(`${API}/contributions`, {
+      const res = await fetch(`${API}/contributions`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -60,6 +60,10 @@ export default function Contributions() {
           note: form.note || 'Online Donation',
         }),
       })
+
+      if (!res.ok) {
+        throw new Error('Failed to record contribution');
+      }
 
       setDonateStatus('success')
       setForm({ ngoId: '', amount: '', note: '' })

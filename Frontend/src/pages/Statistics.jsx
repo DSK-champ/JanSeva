@@ -53,7 +53,7 @@ export default function Statistics() {
     if (filters.focusArea) params.set('focusArea', filters.focusArea)
     if (filters.contributionLevel) params.set('contributionLevel', filters.contributionLevel)
     const data = await get(`${API}/filtered-ngos?${params}`)
-    setFilteredNGOs(data?.ngos || [])
+    setFilteredNGOs(data || [])
     setLoading(false)
   }
 
