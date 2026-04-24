@@ -1,4 +1,9 @@
 require('dotenv').config();
+const path = require('path');
+// Add Backend/node_modules to the global search path so sibling folders can find dependencies
+process.env.NODE_PATH = path.join(__dirname, 'node_modules');
+require('module').Module._initPaths();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');

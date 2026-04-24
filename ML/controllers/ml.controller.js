@@ -1,4 +1,4 @@
-const mongoose = require('../../Backend/node_modules/mongoose');
+const mongoose = require('mongoose');
 const Volunteer = require('../../Backend/src/models/Volunteer');
 const VillageScore = require('../../Backend/src/models/VillageScore');
 const VolunteerScore = require('../../Backend/src/models/VolunteerScore');

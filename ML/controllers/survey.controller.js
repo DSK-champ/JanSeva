@@ -1,7 +1,7 @@
-const mongoose = require('../../Backend/node_modules/mongoose');
-const { parse } = require('../../Backend/node_modules/csv-parse/lib/sync.js');
-const { stringify } = require('../../Backend/node_modules/csv-stringify/lib/sync.js');
-const { v4: uuidv4 } = require('../../Backend/node_modules/uuid/dist/index.js');
+const mongoose = require('mongoose');
+const { parse } = require('csv-parse/sync');
+const { stringify } = require('csv-stringify/sync');
+const { v4: uuidv4 } = require('uuid');
 const SurveyUpload = require('../../Backend/src/models/SurveyUpload');
 const SurveyResponse = require('../../Backend/src/models/SurveyResponse');
 const { buildVulnerabilityPipeline, buildOverallVulnerabilityPipeline } = require('../pipelines/villageVulnerability');
