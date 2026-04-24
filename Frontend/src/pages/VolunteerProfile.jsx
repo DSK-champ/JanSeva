@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { User, Mail, Save, Clock, CheckCircle, MapPin, Briefcase, Calendar, Users, Edit2, X, Trash2, AlertTriangle } from 'lucide-react'
 
-const API = 'http://localhost:5000/api'
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 
 const DOMAINS = [
   'Education & Mentorship',

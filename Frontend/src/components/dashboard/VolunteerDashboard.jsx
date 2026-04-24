@@ -15,7 +15,7 @@ export default function VolunteerDashboard({ token, user }) {
   }, [token])
 
   const toggleCampaign = async (id) => {
-    const res = await fetch(`http://localhost:5000/api/dashboard/campaign-toggle/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/campaign-toggle/${id}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     })

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import confetti from 'canvas-confetti'
 import { Heart, DollarSign, Clock, QrCode, ArrowRight, CheckCircle2 } from 'lucide-react'
 
-const API = 'http://localhost:5000/api'
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 
 export default function Contributions() {
   const [data, setData] = useState(null)

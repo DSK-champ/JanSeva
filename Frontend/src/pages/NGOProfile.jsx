@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Building2, MapPin, Phone, Mail, Trash2, AlertTriangle, Save, ArrowLeft, BadgeCheck, Clock, Edit2, X } from 'lucide-react'
 
-const API = 'http://localhost:5000/api'
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 
 export default function NGOProfile() {
   const navigate = useNavigate()
