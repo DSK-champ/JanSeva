@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { MapPin, Search, Filter, Users, Award, X, Compass } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || `${API}`
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 const FOCUS_AREAS = ['All', 'Food', 'Medical', 'Shelter', 'Education', 'Emergency', 'Other']
 const STATES = ['All', 'Maharashtra', 'Delhi', 'Bihar', 'Uttar Pradesh', 'Gujarat', 'Karnataka', 'Tamil Nadu', 'Rajasthan', 'West Bengal', 'Telangana', 'Kerala', 'Punjab']
 

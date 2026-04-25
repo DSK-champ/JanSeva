@@ -28,7 +28,7 @@ export default function NgoDashboard({ token, user }) {
 
   const removeVolunteer = async (affiliationId) => {
     if (!window.confirm("Are you sure you want to remove this volunteer from your NGO?")) return;
-    const res = await fetch(`${import.meta.env.VITE_API_URL || `${API}`}/dashboard/remove-affiliation/${affiliationId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/remove-affiliation/${affiliationId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })

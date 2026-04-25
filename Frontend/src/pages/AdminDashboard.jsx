@@ -5,7 +5,7 @@ import {
   XCircle, Clock, AlertTriangle, RefreshCw, Filter,
 } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || `${API}`
+const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 
 const STATUS_META = {
   Pending:     { color: '#F4A261', bg: 'rgba(244,162,97,0.12)',  label: 'Pending'     },

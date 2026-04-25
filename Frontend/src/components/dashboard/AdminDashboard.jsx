@@ -22,7 +22,7 @@ export default function AdminDashboard({ token }) {
   }, [token])
 
   const verifyNgo = async (id) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL || `${API}`}/dashboard/verify-ngo/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/verify-ngo/${id}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` }
     })
