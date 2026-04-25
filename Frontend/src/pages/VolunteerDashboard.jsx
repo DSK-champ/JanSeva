@@ -22,7 +22,7 @@ export default function VolunteerDashboard({ user }) {
     try {
       const [profileRes, eventsRes, myEventsRes, ngosRes, allNgosRes, requestsRes] = await Promise.all([
         fetch(`${API}/volunteer/profile`, { headers }).then(res => res.json()),
-        fetch(`${API}/campaigns`, { headers }).then(res => res.json()),
+        fetch(`${API}/campaigns/affiliated`, { headers }).then(res => res.json()),
         fetch(`${API}/campaigns/my`, { headers }).then(res => res.json()),
         fetch(`${API}/volunteer-ngo/my-ngos`, { headers }).then(res => res.json()),
         fetch(`${API}/ngos`, { headers }).then(res => res.json()),
@@ -49,8 +49,11 @@ export default function VolunteerDashboard({ user }) {
   const registerEvent = async (id) => {
     try {
       const res = await fetch(`${API}/campaigns/${id}/join`, { method: 'POST', headers })
+      const data = await res.json()
       if (res.ok) {
         setMyEvents(prev => [...prev, id])
+      } else {
+        alert(data.message || 'Failed to register')
       }
     } catch (err) {
       console.error(err)
@@ -105,11 +108,12 @@ export default function VolunteerDashboard({ user }) {
     .filter(req => req.status === 'approved')
     .map(req => typeof req.ngoId === 'object' ? req.ngoId._id : req.ngoId)
 
-  const filteredEvents = events.filter(event => {
-    const timeUntilStart = new Date(event.startDate).getTime() - Date.now()
-    const isFuture24h = timeUntilStart >= 24 * 60 * 60 * 1000
-    const isApprovedNgo = approvedNgoIds.includes(event.ngoId)
-    return isFuture24h && isApprovedNgo
+  const upcomingEvents = events.filter(event => {
+    return new Date(event.startDate).getTime() > Date.now()
+  })
+
+  const pastEvents = events.filter(event => {
+    return new Date(event.startDate).getTime() <= Date.now()
   })
 
   const filteredAllNGOs = allNGOs.filter(ngo => 
@@ -155,10 +159,11 @@ export default function VolunteerDashboard({ user }) {
             </div>
             
             <div className="space-y-4">
-              {filteredEvents.length === 0 ? (
-                <p className="text-gray-500">No upcoming events available for your approved NGOs at this time.</p>
+              <h3 className="text-lg font-bold text-gray-700">Upcoming Opportunities</h3>
+              {upcomingEvents.length === 0 ? (
+                <p className="text-sm text-gray-500 bg-gray-50 p-4 rounded-xl border border-dashed">No upcoming events found from your affiliated NGOs.</p>
               ) : (
-                filteredEvents.map(event => {
+                upcomingEvents.map(event => {
                 const isRegistered = myEvents.includes(event._id)
                 const _canUnregister = canUnregister(event.startDate)
 
@@ -170,25 +175,25 @@ export default function VolunteerDashboard({ user }) {
                       </div>
                     )}
                     <h3 className="text-xl font-bold mb-2">{event.title}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{event.description}</p>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{event.description}</p>
                     
                     <div className="flex items-center justify-between mt-4">
-                      <div className="flex gap-4 text-sm font-semibold text-gray-500">
-                        <span className="flex items-center gap-1"><Calendar size={16}/> {new Date(event.startDate).toLocaleDateString()}</span>
-                        <span className="flex items-center gap-1"><MapPin size={16}/> {event.city}</span>
+                      <div className="flex gap-4 text-xs font-semibold text-gray-500">
+                        <span className="flex items-center gap-1"><Calendar size={14}/> {new Date(event.startDate).toLocaleDateString()}</span>
+                        <span className="flex items-center gap-1"><MapPin size={14}/> {event.city}</span>
                       </div>
                       
                       {isRegistered ? (
                         <button 
                           onClick={() => unregisterEvent(event._id)}
                           disabled={!_canUnregister}
-                          className={`btn-outline ${!_canUnregister ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`btn-outline text-xs py-2 ${!_canUnregister ? 'opacity-50 cursor-not-allowed' : ''}`}
                           title={!_canUnregister ? "Cannot unregister within 24 hours" : ""}
                         >
                           Unregister
                         </button>
                       ) : (
-                        <button onClick={() => registerEvent(event._id)} className="btn-primary">
+                        <button onClick={() => registerEvent(event._id)} className="btn-primary text-xs py-2">
                           Register
                         </button>
                       )}
@@ -196,6 +201,25 @@ export default function VolunteerDashboard({ user }) {
                   </div>
                 )
               }))}
+
+              {pastEvents.length > 0 && (
+                <>
+                  <h3 className="text-lg font-bold text-gray-700 mt-8">Past Events</h3>
+                  <div className="space-y-3 opacity-70">
+                    {pastEvents.map(event => (
+                      <div key={event._id} className="glass-card p-4 border-gray-200 bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-bold text-gray-800">{event.title}</h4>
+                            <p className="text-xs text-gray-500 mt-1">{new Date(event.startDate).toLocaleDateString()} • {event.city}</p>
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 bg-gray-200 px-2 py-1 rounded">Completed</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
