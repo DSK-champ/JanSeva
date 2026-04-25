@@ -7,14 +7,13 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/', optionalAuth, getCampaigns);
 router.get('/stats', optionalAuth, getCampaignStats);
 
-router.use(protect);
-router.get('/my', getMyCampaigns);
-router.get('/affiliated', getAffiliatedCampaigns);
-router.get('/ngo/my', getNgoCampaigns);
+router.get('/my', protect, getMyCampaigns);
+router.get('/affiliated', protect, getAffiliatedCampaigns);
+router.get('/ngo/my', protect, getNgoCampaigns);
 
 router.get('/:id', optionalAuth, getCampaignById);
-router.get('/ngo/:id', getCampaignDetailsNGO);
-router.delete('/:id', deleteCampaign);
+router.get('/ngo/:id', protect, getCampaignDetailsNGO);
+router.delete('/:id', protect, deleteCampaign);
 router.post('/', createCampaign);
 router.post('/with-survey', upload.single('survey'), createCampaignWithSurvey);
 router.post('/:id/join', joinCampaign);
