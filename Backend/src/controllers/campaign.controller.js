@@ -57,6 +57,11 @@ const joinCampaign = asyncHandler(async (req, res) => {
   const alreadyJoined = campaign.volunteers.some(v => v.toString() === req.user._id.toString());
   if (alreadyJoined) throw new AppError('You have already joined this campaign', 400);
 
+  // Future Date Constraint
+  if (new Date(campaign.startDate) <= new Date()) {
+    throw new AppError('Registration is only allowed for future campaigns', 400);
+  }
+
   // Same Day Constraint
   const userCampaigns = await Campaign.find({
     volunteers: req.user._id,
@@ -130,6 +135,30 @@ const getCampaignById = asyncHandler(async (req, res) => {
   const campaign = await Campaign.findById(req.params.id).populate('volunteers', 'name email').lean();
   if (!campaign) throw new AppError('Campaign not found', 404);
   sendSuccess(res, 200, 'Campaign fetched', campaign);
+});
+
+// ─── GET /api/campaigns/affiliated — Volunteer gets campaigns of their NGOs ───
+const getAffiliatedCampaigns = asyncHandler(async (req, res) => {
+  const VolunteerNGO = require('../models/VolunteerNGO');
+  
+  // 1. Find all approved NGO affiliations for this volunteer
+  const affiliations = await VolunteerNGO.find({ 
+    volunteerId: req.user._id, 
+    status: 'approved' 
+  }).lean();
+  
+  const ngoIds = affiliations.map(a => a.ngoId);
+  
+  if (ngoIds.length === 0) {
+    return sendSuccess(res, 200, 'No affiliated campaigns found', []);
+  }
+
+  // 2. Fetch all campaigns for these NGOs
+  const campaigns = await Campaign.find({ ngoId: { $in: ngoIds } })
+    .sort({ startDate: -1 })
+    .lean();
+
+  sendSuccess(res, 200, 'Affiliated campaigns fetched', campaigns);
 });
 
 // ─── GET /api/campaigns/stats — Campaign analytics ───────────────────────────
@@ -597,4 +626,4 @@ const getCampaignDetailsNGO = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getCampaigns, createCampaign, createCampaignWithSurvey, joinCampaign, leaveCampaign, getMyCampaigns, getNgoCampaigns, getCampaignById, getCampaignDetailsNGO, getCampaignStats, deleteCampaign };
+module.exports = { getCampaigns, createCampaign, createCampaignWithSurvey, joinCampaign, leaveCampaign, getMyCampaigns, getNgoCampaigns, getCampaignById, getCampaignDetailsNGO, getCampaignStats, deleteCampaign, getAffiliatedCampaigns };
