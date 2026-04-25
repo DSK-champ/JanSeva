@@ -57,7 +57,13 @@ const startServer = async () => {
 
     app.use(
       cors({
-        origin: true, // Allow all origins for the demo
+        origin: [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'http://localhost:3002',
+          'http://localhost:5173',
+          'https://jan-seva-lake.vercel.app'
+        ],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
