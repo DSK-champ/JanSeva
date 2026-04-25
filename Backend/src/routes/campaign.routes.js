@@ -14,9 +14,9 @@ router.get('/ngo/my', protect, getNgoCampaigns);
 router.get('/:id', optionalAuth, getCampaignById);
 router.get('/ngo/:id', protect, getCampaignDetailsNGO);
 router.delete('/:id', protect, deleteCampaign);
-router.post('/', createCampaign);
-router.post('/with-survey', upload.single('survey'), createCampaignWithSurvey);
-router.post('/:id/join', joinCampaign);
-router.post('/:id/leave', leaveCampaign);
+router.post('/', protect, createCampaign);
+router.post('/with-survey', protect, upload.single('survey'), createCampaignWithSurvey);
+router.post('/:id/join', protect, joinCampaign);
+router.post('/:id/leave', protect, leaveCampaign);
 
 module.exports = router;
