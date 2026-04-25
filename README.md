@@ -92,6 +92,14 @@ We welcome contributions to make JanSeva even more effective!
 5. **Open PR**: Submit a pull request for review.
 
 ---
+## 👥 Contributors
+
+- [@MohithChandra07](https://github.com/MohithChandra07)
+- [@anishqa](https://github.com/anishqa)
+- [@DSK-champ](https://github.com/DSK-champ/)
+- [@VivekanandaK123](https://github.com/VivekanandaK123)
+- [@sonu-kumar2085](https://github.com/sonu-kumar2085)
+- [@Devyansh0004](https://github.com/Devyansh0004)
 
 ## 📃 License
 
@@ -100,45 +108,3 @@ This project is licensed under the **MIT License**. See `LICENSE` for more detai
 ---
 *Built with ❤️ for social impact by the JanSeva Team.*
 
-## 👥 Contributors
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/MohithChandra07">
-        <img src="https://github.com/MohithChandra07.png" width="80px;" alt=""/>
-        <br /><sub><b>MohithChandra07</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/anishqa">
-        <img src="https://https://github.com/qnishqa"width="80px;" alt=""/>
-        <br /><sub><b>anishqa</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/DSK-champ">
-        <img src="https://github.com/DSK-champ.png" width="80px;" alt=""/>
-        <br /><sub><b>DSK-champ</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/VivekanandaK123">
-        <img src="https://github.com/VivekanandaK123.png" width="80px;" alt=""/>
-        <br /><sub><b>VivekanandaK123</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/sonu-kumar2085">
-        <img src="https://github.com/sonu-kumar2085.png" width="80px;" alt=""/>
-        <br /><sub><b>sonu-kumar2085</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Devyansh0004">
-        <img src="https://github.com/Devyansh0004.png" width="80px;" alt=""/>
-        <br /><sub><b>Devyansh0004</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
