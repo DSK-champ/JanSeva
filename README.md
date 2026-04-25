@@ -95,7 +95,7 @@ We welcome contributions to make JanSeva even more effective!
 ## 👥 Contributors
 
 - [@MohithChandra07](https://github.com/MohithChandra07)
-- [@anishqa](https://github.com/anishqa)
+- [@anishqa](https://github.com/qnishqa)
 - [@DSK-champ](https://github.com/DSK-champ/)
 - [@VivekanandaK123](https://github.com/VivekanandaK123)
 - [@sonu-kumar2085](https://github.com/sonu-kumar2085)
