@@ -94,24 +94,35 @@ const verifyOtpAndSignup = asyncHandler(async (req, res, next) => {
   // Assign role (prevent self-admin)
   let assignedRole = role === 'admin' ? 'volunteer' : (role || 'volunteer');
 
-  // Create user
-  const user = await User.create({ name, email, password, role: assignedRole });
+  let user;
+  try {
+    // Create user
+    user = await User.create({ name, email, password, role: assignedRole });
 
-  // Auto-create volunteer profile
-  if (assignedRole === 'volunteer') {
-    await Volunteer.create({ userId: user._id });
-  }
+    // Auto-create volunteer profile
+    if (assignedRole === 'volunteer') {
+      await Volunteer.create({ userId: user._id });
+    }
 
-  // Auto-create NGO profile in pending state
-  if (assignedRole === 'ngo') {
-    await NGO.create({
-      userId: user._id,
-      name: name,
-      organizationDetails: 'Pending details',
-      location: { type: 'Point', coordinates: [78.9629, 20.5937] },
-      approvalStatus: 'pending',
-      isProfileComplete: false,
-    });
+    // Auto-create NGO profile in pending state
+    if (assignedRole === 'ngo') {
+      await NGO.create({
+        userId: user._id,
+        name: name,
+        organizationDetails: 'Pending details',
+        location: { type: 'Point', coordinates: [78.9629, 20.5937] },
+        coordinates: { lat: 20.5937, lng: 78.9629 }, // Explicit lat/lng for schema satisfaction
+        approvalStatus: 'pending',
+        isProfileComplete: false,
+      });
+    }
+  } catch (error) {
+    // Rollback: delete the user if profile creation failed
+    if (user) {
+      await User.findByIdAndDelete(user._id);
+      logger.error(`Signup failed, rolled back user ${user.email}: ${error.message}`);
+    }
+    return next(error);
   }
 
   logger.info(`OTP verified & account created: ${user.email} (${user.role})`);

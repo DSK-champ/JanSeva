@@ -15,11 +15,19 @@ const errorHandler = (err, req, res, next) => {
       field: e.path,
       message: e.message,
     }));
+    logger.error(`Validation Failed: ${JSON.stringify(errors)}`);
     return res.status(statusCode).json({
       success: false,
       message: 'Validation failed',
       errors,
     });
+  }
+
+  // ── MongoDB Document Validation Error (Code 121) ──────────────────────────
+  if (err.code === 121) {
+    statusCode = 400;
+    message = 'Document failed validation. Check database schema constraints.';
+    logger.error(`MongoDB Schema Validation Failed: ${err.message}`);
   }
 
   // ── Mongoose Duplicate Key ────────────────────────────────────────────────
