@@ -112,7 +112,7 @@ This project is licensed under the **MIT License**. See `LICENSE` for more detai
     </td>
     <td align="center">
       <a href="https://github.com/anishqa">
-        <img src="https://github.com/anishqa.png" width="80px;" alt=""/>
+        <img src="https://https://github.com/qnishqa"width="80px;" alt=""/>
         <br /><sub><b>anishqa</b></sub>
       </a>
     </td>
