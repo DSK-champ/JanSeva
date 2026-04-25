@@ -6,6 +6,8 @@ import TestimonialCard from '../components/TestimonialCard'
 import IndiaMap from '../components/IndiaMap'
 import ServiceCard from '../components/ServiceCard'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 const topServices = [
   { image: '/assets/food_distribution.jpeg', title: 'Food Distribution', desc: 'Coordinate food relief efforts quickly and route support to the neighborhoods that need it most.' },
   { image: '/assets/medical_assistance.jpeg', title: 'Medical Assistance', desc: 'Connect medical camps, volunteer responders, and urgent health needs through one workflow.' },
@@ -35,14 +37,14 @@ export default function Home() {
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/stats/ngo-locations')
+    fetch(`${API}/stats/ngo-locations`)
       .then((res) => res.json())
       .then((data) => {
         if (data.data) setNgoLocations(data.data)
       })
       .catch(() => {})
 
-    fetch('http://localhost:5000/api/stats/overview')
+    fetch(`${API}/stats/overview`)
       .then((res) => res.json())
       .then((data) => {
         if (data.data) setStats(data.data)

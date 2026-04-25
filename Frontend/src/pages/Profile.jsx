@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 export default function Profile() {
   const navigate = useNavigate()
   const token = localStorage.getItem('janseva_token')
@@ -21,7 +23,7 @@ export default function Profile() {
   const handleUpdate = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const res = await fetch('http://localhost:5000/api/dashboard/profile', {
+    const res = await fetch(`${API}/dashboard/profile`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(formData)
@@ -41,7 +43,7 @@ export default function Profile() {
     if (!window.confirm('Are you absolutely sure? This will delete your organization and unregister all volunteers permanently.')) return;
     
     setDeleting(true)
-    const res = await fetch('http://localhost:5000/api/dashboard/profile/ngo', {
+    const res = await fetch(`${API}/dashboard/profile/ngo`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })

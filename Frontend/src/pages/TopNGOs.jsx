@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Trophy, MapPin } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || `${API}`
 
 export default function TopNGOs() {
   const [ngos, setNgos] = useState([])

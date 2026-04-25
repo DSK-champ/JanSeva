@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Users, Activity, Brain, Calendar, DollarSign, Target, ChevronDown, ChevronUp, Table } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || `${API}`
 
 export default function CampaignDetails() {
   const { id } = useParams()

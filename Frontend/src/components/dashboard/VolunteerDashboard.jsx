@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 export default function VolunteerDashboard({ token, user }) {
   const [data, setData] = useState(null)
   const [showNgoModal, setShowNgoModal] = useState(false)
@@ -7,7 +9,7 @@ export default function VolunteerDashboard({ token, user }) {
   const [loadingNgos, setLoadingNgos] = useState(false)
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/dashboard/volunteer', {
+    fetch(`${API}/dashboard/volunteer`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -15,7 +17,7 @@ export default function VolunteerDashboard({ token, user }) {
   }, [token])
 
   const toggleCampaign = async (id) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/campaign-toggle/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || `${API}`}/dashboard/campaign-toggle/${id}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -31,7 +33,7 @@ export default function VolunteerDashboard({ token, user }) {
     setShowNgoModal(true)
     setLoadingNgos(true)
     try {
-      const res = await fetch('http://localhost:5000/api/ngos')
+      const res = await fetch(`${API}/ngos`)
       const body = await res.json()
       if (body.success) {
         setAvailableNgos(body.data)
@@ -44,7 +46,7 @@ export default function VolunteerDashboard({ token, user }) {
   }
 
   const requestJoinNgo = async (ngoId) => {
-    const res = await fetch('http://localhost:5000/api/dashboard/request-ngo', {
+    const res = await fetch(`${API}/dashboard/request-ngo`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

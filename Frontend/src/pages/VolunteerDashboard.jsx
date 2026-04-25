@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Calendar, Clock, CheckCircle, AlertTriangle, Building2, MapPin, ClipboardList } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || `${API}`
 
 export default function VolunteerDashboard({ user }) {
   const [profile, setProfile] = useState(null)

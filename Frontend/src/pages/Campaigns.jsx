@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Users } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || `${API}`
 const STATUSES = ['Active', 'Upcoming', 'Completed']
 const CATEGORIES = ['All', 'Food', 'Medical', 'Shelter', 'Education', 'Emergency', 'Other']
 

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 export default function AdminDashboard({ token }) {
   const [data, setData] = useState(null)
   const [showPopup, setShowPopup] = useState(false)
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/dashboard/admin', {
+    fetch(`${API}/dashboard/admin`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -20,7 +22,7 @@ export default function AdminDashboard({ token }) {
   }, [token])
 
   const verifyNgo = async (id) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/verify-ngo/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || `${API}`}/dashboard/verify-ngo/${id}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` }
     })

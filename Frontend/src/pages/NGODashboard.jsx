@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { Building2, Users, CheckCircle, XCircle, AlertTriangle, Plus, FileSpreadsheet, Map, Download, ChevronDown, Brain, Search, ClipboardList } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || `${API}`
 
 export default function NGODashboard({ user }) {
   const navigate = useNavigate()
@@ -341,7 +341,7 @@ export default function NGODashboard({ user }) {
                   {showTemplatesMenu && (
                     <div className="absolute right-0 top-full mt-1 bg-white border shadow-lg rounded-xl z-20 min-w-44 overflow-hidden">
                       {['food','health','education','shelter','emergency'].map(type => (
-                        <a key={type} href={`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/surveys/templates/${type}`} download className="block px-4 py-2 text-sm capitalize hover:bg-gray-50 font-medium">
+                        <a key={type} href={`${import.meta.env.VITE_API_URL || `${API}`}/surveys/templates/${type}`} download className="block px-4 py-2 text-sm capitalize hover:bg-gray-50 font-medium">
                           📄 {type} survey
                         </a>
                       ))}

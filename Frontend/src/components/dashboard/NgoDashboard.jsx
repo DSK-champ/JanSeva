@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Search, UserMinus } from 'lucide-react'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 export default function NgoDashboard({ token, user }) {
   const [data, setData] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/dashboard/ngo', {
+    fetch(`${API}/dashboard/ngo`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -14,7 +16,7 @@ export default function NgoDashboard({ token, user }) {
   }, [token])
 
   const respondToRequest = async (requestId, status) => {
-    const res = await fetch('http://localhost:5000/api/dashboard/respond-affiliation', {
+    const res = await fetch(`${API}/dashboard/respond-affiliation`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ requestId, status })
@@ -26,7 +28,7 @@ export default function NgoDashboard({ token, user }) {
 
   const removeVolunteer = async (affiliationId) => {
     if (!window.confirm("Are you sure you want to remove this volunteer from your NGO?")) return;
-    const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/dashboard/remove-affiliation/${affiliationId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || `${API}`}/dashboard/remove-affiliation/${affiliationId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })

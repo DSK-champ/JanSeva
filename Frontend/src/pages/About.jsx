@@ -4,6 +4,8 @@ import { ArrowRight, Target, Eye, Shield, Zap, BarChart2, Users } from 'lucide-r
 import AnimatedCounter from '../components/AnimatedCounter'
 import TeamCard from '../components/TeamCard'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 // impactMetrics and teamMembers are now managed inside the component based on fetched data
 
 const teamMembers = [
@@ -26,7 +28,7 @@ export default function About() {
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/stats/overview')
+    fetch(`${API}/stats/overview`)
       .then((res) => res.json())
       .then((data) => {
         if (data.data) setStats(data.data)

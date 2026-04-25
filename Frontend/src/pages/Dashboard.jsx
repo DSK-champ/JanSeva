@@ -5,7 +5,7 @@ import VolunteerDashboard from './VolunteerDashboard'
 import NGODashboard from './NGODashboard'
 import AdminDashboard from './AdminDashboard'
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+const API = import.meta.env.VITE_API_URL || `${API}`
 
 const STATUS_COLORS = {
   Pending:      { color: '#F4A261', bg: 'rgba(244,162,97,0.12)'   },

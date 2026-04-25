@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, ArrowRight, Shield, Eye, EyeOff, KeyRound, RotateCcw, CheckCircle2 } from 'lucide-react'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 const OTP_LENGTH = 6
 const OTP_EXPIRY_SECONDS = 300 // 5 minutes
 const RESEND_COOLDOWN = 30 // 30 seconds before allowing resend
@@ -61,7 +63,7 @@ const Signup = () => {
     setOtpSending(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:5000/api/auth/send-otp', {
+      const response = await fetch(`${API}/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, name: formData.name, role: formData.role }),
@@ -89,7 +91,7 @@ const Signup = () => {
     setOtpSending(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:5000/api/auth/send-otp', {
+      const response = await fetch(`${API}/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, name: formData.name, role: formData.role }),
@@ -152,7 +154,7 @@ const Signup = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+      const response = await fetch(`${API}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

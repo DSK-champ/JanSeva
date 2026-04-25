@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Mail, Phone, MapPin, Clock, ArrowRight } from 'lucide-react'
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+
 const contactInfo = [
   { icon: Mail, title: 'Email', value: 'support.janseva@gmail.com', sub: 'We reply within 24 hours' },
   { icon: Phone, title: 'Phone', value: '7404189988', sub: 'Mon - Fri, 9 AM - 6 PM IST' },
@@ -46,7 +48,7 @@ export default function Contact() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(`${API}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
