@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Filter, Zap } from 'lucide-react'
 
-const API = `${API}/stats`
+const API = (import.meta.env.VITE_API_URL || "http://localhost:5000/api") + "/stats"
 const COLORS = ['#40916C', '#4CC9F0', '#52B788', '#9D4EDD', '#2D6A4F', '#74C69D']
 const SKILL_OPTIONS = ['First Aid', 'Cooking', 'Driving', 'Teaching', 'Medical', 'Counselling', 'Construction', 'IT Support', 'Logistics', 'Translation']
 
