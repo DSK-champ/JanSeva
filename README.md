@@ -3,7 +3,8 @@
 JanSeva is a state-of-the-art civic-tech platform that empowers NGOs to manage disaster relief and community development through data-driven intelligence. By bridging the gap between donors, volunteers, and high-need regions, JanSeva ensures that every Rupee and every hour of volunteer time is directed where it will have the maximum impact.
 
 ---
-
+Click here to view the live website : https://jan-seva-cs2202.vercel.app/
+---
 ## ✨ Key Features
 
 ### 🧠 ML Intelligence Hub
