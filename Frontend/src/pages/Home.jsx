@@ -75,8 +75,8 @@ export default function Home() {
               <br/>
               <span className="section-label">Serving India Together</span>
               <h1 className="hero-title">
-                Uniting volunteers and NGOs for
-                <span style={{ color: 'var(--green-6)' }}> communities that need us</span>
+                Calm, modern coordination for
+                <span style={{ color: 'var(--green-6)' }}> NGO impact at scale</span>
               </h1>
               <p className="hero-text">
                 JanSeva is a social platform that connects NGOs, volunteers, and citizens to deliver relief, education, healthcare, and shelter to the people who need it most — wherever they are in India.
