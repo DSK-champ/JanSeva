@@ -10,26 +10,24 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 
 const topServices = [
   { image: '/assets/food_distribution.jpeg', title: 'Food Distribution', desc: 'Coordinate food relief efforts quickly and route support to the neighborhoods that need it most.' },
-  { image: '/assets/medical_assistance.jpeg', title: 'Medical Assistance', desc: 'Connect medical camps, volunteer responders, and urgent health needs through one workflow.' },
-  { image: '/assets/education_support.jpg', title: 'Education Support', desc: 'Track teaching requests, scholarships, and local education drives without losing field visibility.' },
-  { image: '/assets/shelter_assistance.jpeg', title: 'Shelter Assistance', desc: 'Match shelter capacity with on-ground requests and keep delivery teams aligned in real time.' },
-  { image: '/assets/emergency_resonse.avif', title: 'Emergency Response', desc: 'Spin up rapid-response coordination during disasters with clear priorities and resource tracking.' },
-  { image: '/assets/voluteer_reg.jpeg', title: 'Volunteer Registration', desc: 'Bring new volunteers in fast, capture their skills, and deploy them to the right missions.' },
+  { image: '/assets/medical_assistance.jpeg', title: 'Medical Assistance', desc: 'Connect medical camps, volunteer responders, and urgent health needs through one unified workflow.' },
+  { image: '/assets/education_support.jpg', title: 'Education Support', desc: 'Track teaching requests, scholarships, and local education drives — keeping every child in focus.' },
+  { image: '/assets/shelter_assistance.jpeg', title: 'Shelter Assistance', desc: 'Match shelter capacity with on-ground requests and keep relief teams aligned in real time.' },
+  { image: '/assets/emergency_resonse.avif', title: 'Emergency Response', desc: 'Deploy rapid-response coordination during disasters with clear priorities and transparent resource tracking.' },
+  { image: '/assets/voluteer_reg.jpeg', title: 'Volunteer Registration', desc: 'Bring new volunteers in fast, capture their skills, and deploy them to the missions that need them most.' },
 ]
-
-// impactStats is now dynamically generated inside the component
 
 const testimonials = [
   { quote: 'JanSeva transformed how we coordinate our volunteers. Response time dropped dramatically and our teams finally share one clear picture.', name: 'Priya Sharma', role: 'Program Director', org: 'Sewa Foundation', initials: 'PS', color: 'bg-green-600' },
-  { quote: 'The analytics helped us identify high-priority zones we were missing. It feels operationally calm instead of chaotic now.', name: 'Rajan Mehta', role: 'Field Coordinator', org: 'Bihar Relief Network', initials: 'RM', color: 'bg-green-500' },
-  { quote: 'Volunteer allocation used to take hours. Now it takes minutes, and our field teams stay focused on delivery instead of coordination overhead.', name: 'Anjali Singh', role: 'Executive Director', org: 'Jan Kalyan Trust', initials: 'AS', color: 'bg-green-400' },
-  { quote: 'It is simple enough for local coordinators and strong enough for leadership reporting. That balance is hard to get right, and JanSeva does it well.', name: 'Dr. Suresh Yadav', role: 'Chief Impact Officer', org: 'Pragati Sansthan', initials: 'SY', color: 'bg-green-700' },
+  { quote: 'The analytics helped us identify high-priority zones we were missing. Our relief efforts are now reaching the communities that need us most.', name: 'Rajan Mehta', role: 'Field Coordinator', org: 'Bihar Relief Network', initials: 'RM', color: 'bg-green-500' },
+  { quote: 'Volunteer allocation used to take hours. Now it takes minutes, and our field teams stay focused on serving people instead of managing spreadsheets.', name: 'Anjali Singh', role: 'Executive Director', org: 'Jan Kalyan Trust', initials: 'AS', color: 'bg-green-400' },
+  { quote: 'Simple enough for local coordinators and strong enough for leadership reporting. That balance is hard to get right, and JanSeva does it well.', name: 'Dr. Suresh Yadav', role: 'Chief Impact Officer', org: 'Pragati Sansthan', initials: 'SY', color: 'bg-green-700' },
 ]
 
 const workflow = [
-  { step: '01', icon: ClipboardList, title: 'Capture needs clearly', desc: 'Field workers and citizens submit structured requests so every case starts with consistent information.' },
-  { step: '02', icon: Users, title: 'Match volunteers faster', desc: 'Skills, availability, and geography are organized into a cleaner volunteer assignment flow.' },
-  { step: '03', icon: Building2, title: 'Track delivery confidently', desc: 'NGOs monitor execution, fulfillment, and outcomes from a single coordinated workspace.' },
+  { step: '01', icon: ClipboardList, title: 'Communities raise their voice', desc: 'Field workers and citizens submit structured requests so no need goes unheard and every case is tracked from day one.' },
+  { step: '02', icon: Users, title: 'Volunteers are matched to missions', desc: 'Skills, availability, and location come together to connect the right person to the right place — fast.' },
+  { step: '03', icon: Building2, title: 'NGOs deliver and report impact', desc: 'Organizations monitor fulfillment and outcomes in one place, ensuring accountability to every community they serve.' },
 ]
 
 export default function Home() {
@@ -53,14 +51,14 @@ export default function Home() {
   }, [])
 
   const impactStats = stats ? [
-    { value: stats.volunteers.total, suffix: '+', label: 'Volunteers Coordinated' },
-    { value: stats.ngos.verified, suffix: '+', label: 'NGOs Connected' },
-    { value: stats.requests.total, suffix: '+', label: 'Requests Managed' },
+    { value: stats.volunteers.total, suffix: '+', label: 'Volunteers Mobilised' },
+    { value: stats.ngos.verified, suffix: '+', label: 'NGOs Partnered' },
+    { value: stats.requests.total, suffix: '+', label: 'Requests Fulfilled' },
     { value: 50, suffix: '+', label: 'Communities Served' },
   ] : [
-    { value: 0, suffix: '+', label: 'Volunteers Coordinated' },
-    { value: 0, suffix: '+', label: 'NGOs Connected' },
-    { value: 0, suffix: '+', label: 'Requests Managed' },
+    { value: 0, suffix: '+', label: 'Volunteers Mobilised' },
+    { value: 0, suffix: '+', label: 'NGOs Partnered' },
+    { value: 0, suffix: '+', label: 'Requests Fulfilled' },
     { value: 0, suffix: '+', label: 'Communities Served' },
   ]
 
@@ -75,22 +73,22 @@ export default function Home() {
                 Support communities in need. Donate Now &rarr;
               </Link>
               <br/>
-              <span className="section-label">Smart Resource Allocation</span>
+              <span className="section-label">Serving India Together</span>
               <h1 className="hero-title">
-                Calm, modern coordination for
-                <span style={{ color: 'var(--green-6)' }}> NGO impact at scale</span>
+                Uniting volunteers and NGOs for
+                <span style={{ color: 'var(--green-6)' }}> communities that need us</span>
               </h1>
               <p className="hero-text">
-                JanSeva helps NGOs organize community needs, deploy volunteers faster, and stay aligned through a cleaner, lighter operating platform built for real field work.
+                JanSeva is a social platform that connects NGOs, volunteers, and citizens to deliver relief, education, healthcare, and shelter to the people who need it most — wherever they are in India.
               </p>
 
               <div className="hero-actions mt-8">
                 <Link to="/services" className="btn-primary">
-                  Explore Services
+                  Explore Our Work
                   <ArrowRight size={18} />
                 </Link>
                 <Link to="/about" className="btn-outline">
-                  Learn More
+                  About Us
                 </Link>
               </div>
 
@@ -109,7 +107,7 @@ export default function Home() {
                     ))}
                   </div>
                   <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                    Trusted by <strong style={{ color: 'var(--green-8)' }}>{stats ? stats.ngos.verified : 0}+ NGOs</strong> coordinating community response across India.
+                    Trusted by <strong style={{ color: 'var(--green-8)' }}>{stats ? stats.ngos.verified : 0}+ NGOs</strong> serving communities across India every day.
                   </p>
                 </div>
               </div>
@@ -123,24 +121,24 @@ export default function Home() {
                       Live coordination
                     </p>
                     <p className="mt-2 text-2xl font-extrabold tracking-[-0.04em]" style={{ color: 'var(--green-8)', fontFamily: 'Space Grotesk, Manrope, sans-serif' }}>
-                      One clear command center
+                      Relief in real time
                     </p>
                   </div>
                   <div className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ background: 'rgba(82, 183, 136, 0.12)', color: 'var(--green-7)' }}>
-                    Light + readable
+                    Active now
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="soft-card p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--text-soft)' }}>Requests synced</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--text-soft)' }}>Requests received</p>
                     <p className="mt-3 text-4xl font-extrabold tracking-[-0.05em]" style={{ color: 'var(--green-8)', fontFamily: 'Space Grotesk, Manrope, sans-serif' }}>
                       {stats ? `${stats.requests.total}+` : '0+'}
                     </p>
-                    <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>Structured intake keeps teams aligned from report to resolution.</p>
+                    <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>Every request represents a family or individual counting on us for help.</p>
                   </div>
                   <div className="glass-card p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--text-soft)' }}>Volunteer matching</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--text-soft)' }}>Skills deployed</p>
                     <div className="mt-4 space-y-3">
                       {['First aid', 'Food relief', 'Teaching'].map((item) => (
                         <div key={item} className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ background: 'rgba(216, 243, 220, 0.46)' }}>
@@ -154,9 +152,9 @@ export default function Home() {
 
                 <div className="mt-4 grid gap-4 md:grid-cols-3">
                   {[
-                    { label: 'Resolution rate', value: stats ? `${stats.requests.resolutionRate}%` : '0%' },
-                    { label: 'Average response', value: '< 1hr' },
-                    { label: 'District coverage', value: '50+' },
+                    { label: 'Cases resolved', value: stats ? `${stats.requests.resolutionRate}%` : '0%' },
+                    { label: 'Avg. response', value: '< 1hr' },
+                    { label: 'Districts reached', value: '50+' },
                   ].map((item) => (
                     <div key={item.label} className="glass-card p-4">
                       <p className="text-xs font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--text-soft)' }}>{item.label}</p>
@@ -175,10 +173,10 @@ export default function Home() {
       <section className="section section-tint">
         <div className="container">
           <div className="section-head">
-            <span className="section-label">NGO Distribution</span>
-            <h2 className="section-title mt-4">A cleaner view of your reach across India</h2>
+            <span className="section-label">Our Reach</span>
+            <h2 className="section-title mt-4">Serving communities across every state of India</h2>
             <p className="section-subtitle mt-4">
-              Explore our network of {ngoLocations.length}+ NGOs, see where activity is concentrated, and surface high-impact organizations without visual clutter.
+              Our network of {ngoLocations.length}+ partner NGOs spans the length and breadth of India — working in cities, towns, and villages to ensure no community is left behind.
             </p>
           </div>
 
@@ -190,10 +188,10 @@ export default function Home() {
               <div className="glass-card p-6">
                 <p className="eyebrow-note">Featured NGOs</p>
                 <h3 className="mt-3 text-2xl font-extrabold tracking-[-0.04em]" style={{ color: 'var(--green-8)', fontFamily: 'Space Grotesk, Manrope, sans-serif' }}>
-                  Strong coverage, clearer prioritization
+                  Verified partners driving real change
                 </h3>
                 <p className="mt-3 text-sm leading-7" style={{ color: 'var(--text-muted)' }}>
-                  The layout highlights verified, high-impact organizations without making the section feel cramped or overly dense.
+                  These organisations have earned our trust through consistent service delivery and community accountability. Every verified NGO on JanSeva is committed to transparent, people-first impact.
                 </p>
               </div>
 
@@ -230,10 +228,10 @@ export default function Home() {
       <section className="section">
         <div className="container">
           <div className="section-head">
-            <span className="section-label">What We Offer</span>
-            <h2 className="section-title mt-4">Core services built on one consistent card system</h2>
+            <span className="section-label">What We Do</span>
+            <h2 className="section-title mt-4">Aid where it matters — delivered through dedicated service</h2>
             <p className="section-subtitle mt-4">
-              Every service module now sits inside the same aligned, breathable layout so the platform feels modern and easy to scan.
+              From emergency food relief to long-term education support — JanSeva enables NGOs and volunteers to coordinate humanitarian services that create lasting change in people's lives.
             </p>
           </div>
 
@@ -257,9 +255,9 @@ export default function Home() {
         <div className="container">
           <div className="section-head">
             <span className="section-label">On The Ground</span>
-            <h2 className="section-title mt-4">Real impact, real communities</h2>
+            <h2 className="section-title mt-4">Real people. Real impact. Real communities.</h2>
             <p className="section-subtitle mt-4">
-              From food distribution to education drives, JanSeva connects the people who care with the communities that need them most.
+              From food distribution drives to education camps — JanSeva connects the people who care with the communities that need them most. This is what compassion looks like in action.
             </p>
           </div>
           <div className="cards-grid-3" style={{ gap: '16px' }}>
@@ -272,7 +270,7 @@ export default function Home() {
               <div style={{ padding: '18px 20px' }}>
                 <span className="badge badge-green">Food Relief</span>
                 <p className="mt-3 text-sm font-semibold" style={{ color: 'var(--green-8)' }}>Community Food Distribution</p>
-                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Volunteers coordinate meals for hundreds of families every week.</p>
+                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Our volunteers ensure hundreds of families never go to sleep hungry — week after week.</p>
               </div>
             </div>
             <div className="glass-card overflow-hidden" style={{ padding: 0 }}>
@@ -283,8 +281,8 @@ export default function Home() {
               />
               <div style={{ padding: '18px 20px' }}>
                 <span className="badge" style={{ background: 'rgba(37,99,235,0.1)', color: 'var(--blue-accent)' }}>Healthcare</span>
-                <p className="mt-3 text-sm font-semibold" style={{ color: 'var(--green-8)' }}>Rural Medical Camps</p>
-                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Free health checkups and medicines reaching underserved villages.</p>
+                <p className="mt-3 text-sm font-semibold" style={{ color: 'var(--green-8)' }}>Free Medical Camps</p>
+                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Quality healthcare and medicines reaching the most underserved villages across India.</p>
               </div>
             </div>
             <div className="glass-card overflow-hidden" style={{ padding: 0 }}>
@@ -296,7 +294,7 @@ export default function Home() {
               <div style={{ padding: '18px 20px' }}>
                 <span className="badge" style={{ background: 'rgba(220,38,38,0.1)', color: 'var(--red-accent)' }}>Education</span>
                 <p className="mt-3 text-sm font-semibold" style={{ color: 'var(--green-8)' }}>Volunteer Teaching Drives</p>
-                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Bringing quality education to children in rural and semi-urban areas.</p>
+                <p className="mt-1 text-xs leading-6" style={{ color: 'var(--text-muted)' }}>Bringing quality education and hope to children in rural and semi-urban communities.</p>
               </div>
             </div>
           </div>
@@ -306,10 +304,10 @@ export default function Home() {
       <section className="section section-soft">
         <div className="container">
           <div className="section-head">
-            <span className="section-label">Impact</span>
-            <h2 className="section-title mt-4">Readable metrics with less visual noise</h2>
+            <span className="section-label">Our Impact</span>
+            <h2 className="section-title mt-4">Every number is a life touched</h2>
             <p className="section-subtitle mt-4">
-              The new light palette keeps performance data prominent without relying on heavy dark backgrounds.
+              Behind each statistic are real people — families fed, children educated, patients treated, and communities lifted through the power of collective compassion.
             </p>
           </div>
 
@@ -330,9 +328,9 @@ export default function Home() {
         <div className="container">
           <div className="section-head">
             <span className="section-label">How It Works</span>
-            <h2 className="section-title mt-4">A simpler path from report to response</h2>
+            <h2 className="section-title mt-4">From a cry for help to a helping hand — fast</h2>
             <p className="section-subtitle mt-4">
-              Structure, matching, and tracking now sit inside a more deliberate three-step flow with stronger spacing and hierarchy.
+              JanSeva simplifies the entire humanitarian response cycle so NGOs spend less time on coordination and more time on the ground, serving the people who need them most.
             </p>
           </div>
 
@@ -356,10 +354,10 @@ export default function Home() {
       <section className="section section-tint">
         <div className="container">
           <div className="section-head">
-            <span className="section-label">Community Trust</span>
-            <h2 className="section-title mt-4">Testimonials that breathe</h2>
+            <span className="section-label">Voices From The Field</span>
+            <h2 className="section-title mt-4">Heard from those doing the hardest work</h2>
             <p className="section-subtitle mt-4">
-              Feedback from the field now sits in cleaner, equal-height cards with better spacing and much stronger readability.
+              The people who trust JanSeva most are the coordinators, directors, and field teams giving their time every day to serve communities across India.
             </p>
           </div>
 
@@ -377,10 +375,10 @@ export default function Home() {
             className="light-panel mx-auto max-w-4xl p-8 text-center md:p-12"
             style={{ background: 'linear-gradient(135deg, rgba(216,243,220,0.88), rgba(255,255,255,0.96) 55%, rgba(76,201,240,0.12))' }}
           >
-            <span className="section-label">Ready To Start</span>
-            <h2 className="section-title mt-5">A modern NGO platform should feel calm, not crowded</h2>
+            <span className="section-label">Join The Movement</span>
+            <h2 className="section-title mt-5">Together, we can reach every community that needs us</h2>
             <p className="section-subtitle mx-auto mt-4 max-w-2xl">
-              JanSeva now presents the platform with cleaner alignment, stronger hierarchy, and a fresher visual tone while keeping all underlying functionality intact.
+              Whether you are an NGO, a volunteer, or someone who simply wants to help — JanSeva gives you the tools to make your compassion count. Join thousands of changemakers across India.
             </p>
             <div className="inline-actions mt-8 justify-center">
               <Link to="/signup" className="btn-mustard">
