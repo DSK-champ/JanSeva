@@ -67,8 +67,7 @@ cd Frontend
 npm install
 npm run dev
 ```
-The application will be available at `http://localhost:3000` (or `5173` depending on configuration).
-
+The application will be available at `https://jan-seva-cs2202.vercel.app/`
 ---
 
 ## 🛠 Tech Stack
@@ -95,16 +94,12 @@ We welcome contributions to make JanSeva even more effective!
 ---
 ## 👥 Contributors
 
-- [@DSK-champ](https://github.com/DSK-champ/)
-- [@MohithChandra07](https://github.com/MohithChandra07)
-- [@VivekanandaK123](https://github.com/VivekanandaK123)
-- [@sonu-kumar2085](https://github.com/sonu-kumar2085)
-- [@Devyansh0004](https://github.com/Devyansh0004)
-- [@anishqa](https://github.com/qnishqa)
-
-## 📃 License
-
-This project is licensed under the **MIT License**. See `LICENSE` for more details.
+- [@Sravan Kumar](https://github.com/DSK-champ/)
+- [@Mohith Chandra](https://github.com/MohithChandra07)
+- [@Vivekananda](https://github.com/VivekanandaK123)
+- [@Sonu Kumar](https://github.com/sonu-kumar2085)
+- [@Devyansh Kumar](https://github.com/Devyansh0004)
+- [@Kanishka](https://github.com/qnishqa)
 
 ---
 *Built with ❤️ for social impact by the JanSeva Team.*
